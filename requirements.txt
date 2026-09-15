@@ -1,0 +1,2 @@
+# Este bot usa solo la librería estándar de Python (urllib, json, etc.)
+# No necesita instalar nada extra. El archivo existe por convención.
