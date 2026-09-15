@@ -1,0 +1,41 @@
+name: Alertas de empleo
+
+# Cuándo se ejecuta el bot
+on:
+  schedule:
+    - cron: "0 */3 * * *"   # cada 3 horas (hora UTC; GitHub puede retrasarlo unos minutos)
+  workflow_dispatch:          # botón para ejecutarlo manualmente desde la pestaña Actions
+
+# Permiso para que el bot pueda guardar (commitear) las ofertas ya vistas
+permissions:
+  contents: write
+
+jobs:
+  buscar-empleos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Instalar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Ejecutar el bot
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python job_alert_bot.py
+
+      - name: Guardar las ofertas ya notificadas
+        run: |
+          if [ -n "$(git status --porcelain seen_jobs.json)" ]; then
+            git config user.name  "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add seen_jobs.json
+            git commit -m "Actualiza ofertas notificadas [skip ci]"
+            git push
+          else
+            echo "Sin cambios en seen_jobs.json"
+          fi
