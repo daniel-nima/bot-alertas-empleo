@@ -190,7 +190,13 @@ def main():
     token = os.environ.get("TELEGRAM_TOKEN")
     chat_id = os.environ.get("TELEGRAM_CHAT_ID")
     if not token or not chat_id:
-        raise SystemExit("Faltan las variables TELEGRAM_TOKEN y/o TELEGRAM_CHAT_ID")
+        print("=" * 60)
+        print("AUN NO ESTA CONFIGURADO EL BOT.")
+        print("Agrega los secretos TELEGRAM_TOKEN y TELEGRAM_CHAT_ID en:")
+        print("  Settings > Secrets and variables > Actions")
+        print("El bot no hara nada (ni fallara) hasta que existan.")
+        print("=" * 60)
+        return  # salir sin error para no enviar correos de fallo
 
     vistos = cargar_vistos()
     primera_vez = len(vistos) == 0
